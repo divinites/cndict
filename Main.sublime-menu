@@ -1,0 +1,32 @@
+[
+	{
+		"caption": "Tools",
+		"mnemonic": "T",
+		"id": "tools",
+		"children": [
+			{
+				"caption": "Packages",
+				"mnemonic": "P",
+				"id": "packages",
+				"children": [
+					{
+						"caption": "CN Dict",
+						"children": [
+							{
+								"command": "open_file",
+								"args": {"file": "${packages}/cndict/Default.sublime-keymap"},
+								"caption": "Keymap – Default"
+							},
+							{
+								"command": "open_file",
+								"args": {"file": "${packages}/cndict/Cndict.sublime-keymap"},
+								"caption": "keymap – User"
+							},
+							{ "caption": "-" }
+						]
+					}
+				]
+			}
+		]
+	}
+]
