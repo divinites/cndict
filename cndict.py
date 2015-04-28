@@ -10,10 +10,12 @@ import sublime
 
 class CndictCommand(sublime_plugin.WindowCommand):
 
-    def run(self):
+    def run(self, **kwargs):
         print('\n' * 50)
         settings = sublime.load_settings("cndict.sublime-settings")
         self.args = settings.get("Default Dict")
+        if 'dict' in kwargs.keys():
+            self.args = kwargs['dict']
         window = self.window
         view = window.active_view()
         sel = view.sel()
