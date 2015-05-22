@@ -11,7 +11,6 @@ import sublime
 class CndictCommand(sublime_plugin.WindowCommand):
 
     def run(self, **kwargs):
-        print('\n' * 50)
         settings = sublime.load_settings("cndict.sublime-settings")
         self.args = settings.get("Default Dict")
         if 'dict' in kwargs.keys():
@@ -21,14 +20,15 @@ class CndictCommand(sublime_plugin.WindowCommand):
         sel = view.sel()
         region = sel[0]
         word = view.substr(region)
-        func = LookUpDict(word, self.args)
+        func = LookUpDict(window, word, self.args)
         func.start()
 
 
 class LookUpDict(Thread):
 
-    def __init__(self, word, args):
+    def __init__(self, window, word, args):
         Thread.__init__(self)
+        self.window = window
         self.word = word
         self.args = args
 
@@ -54,32 +54,37 @@ class LookUpDict(Thread):
         return(json.loads(data))
 
     def format(self, json_data):
+        snippet = ''
         if self.args == 'Youdao':
             if 'basic' in json_data:
                 for explain in json_data['basic'].items():
                     if explain[0] == 'explains':
                         for i in explain[1:]:
-                            print('\n'.join(i))
-                print(u"------------------------")
+                            snippet += '\n'.join(i)
+                snippet += "\n------------------------\n"
             if "web" in json_data:
                 for explain in json_data['web']:
                     net_explain = ','.join(explain['value'])
-                    print("%s : %s" % (explain['key'], net_explain))
+                    snippet += "{} : {}\n".format(explain['key'], net_explain)
         elif self.args == 'Jinshan':
             if 'symbols' in json_data:
                 for explain in json_data['symbols'][0]['parts']:
                     if isinstance(explain['means'][0], str):
-                        print('{} : {}'.format(explain["part"], ','.join(explain["means"])))
+                        snippet += '{} : {}\n'.format(explain["part"], ','.join(explain["means"]))
                     if isinstance(explain['means'][0], dict):
                         for i in explain['means']:
-                            print('{}:{}'.format("释义", i["word_mean"]))
-                print(u"------------------------")
+                            snippet += '{}:{}\n'.format("释义", i["word_mean"])
+                snippet += "\n------------------------\n"
         else:
-            print("可能太长了……词典里没有")
+            snippet += "可能太长了……词典里没有"
+        return snippet
 
     def run(self):
         if self.checkword(self.word):
             json_data = self.acquiredata(self.word)
-            self.format(json_data)
+            snippet = self.format(json_data)
         else:
-            print("忘记选字了吧？")
+            snippet = "忘记选字了吧？"
+        board = self.window.create_output_panel("tran")
+        board.run_command('append', {'characters': snippet})
+        self.window.run_command("show_panel", {"panel": "output.tran"})
