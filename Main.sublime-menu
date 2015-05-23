@@ -19,7 +19,7 @@
 							},
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/cndict/Cndict.sublime-keymap"},
+								"args": {"file": "${packages}/User/Cndict.sublime-keymap"},
 								"caption": "keymap – User"
 							},
 							{ "caption": "-" }
