@@ -1,0 +1,1 @@
+Replace “Youdao English-Chinese Translate” with Cndict. Use output Panel to show the translation results.
