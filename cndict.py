@@ -1,4 +1,3 @@
-
 import sublime_plugin
 import urllib.request
 import urllib.error
@@ -7,9 +6,11 @@ from urllib.parse import quote
 import json
 import sublime
 
+_YOUDAO_API = "http://fanyi.youdao.com/openapi.do?keyfrom=divinites&key=1583185521&type=data&doctype=json&version=1.1&q="
+_CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
+
 
 class CndictCommand(sublime_plugin.WindowCommand):
-
     def run(self, **kwargs):
         settings = sublime.load_settings("cndict.sublime-settings")
         self.args = settings.get("Default Dict")
@@ -25,7 +26,6 @@ class CndictCommand(sublime_plugin.WindowCommand):
 
 
 class LookUpDict(Thread):
-
     def __init__(self, window, word, args):
         Thread.__init__(self)
         self.window = window
@@ -40,9 +40,10 @@ class LookUpDict(Thread):
 
     def acquiredata(self, word):
         if self.args == 'Youdao':
-            request = "http://fanyi.youdao.com/openapi.do?keyfrom=divinites&key=1583185521&type=data&doctype=json&version=1.1&q=" + quote(self.word)
+            request = _YOUDAO_API + quote(self.word)
         elif self.args == 'Jinshan':
-            request = "http://dict-co.iciba.com/api/dictionary.php?w="+quote(self.word)+"&type=json&key=0EAE08A016D6688F64AB3EBB2337BFB0"
+            request = _CIBA_API + quote(
+                self.word) + "&type=json&key=0EAE08A016D6688F64AB3EBB2337BFB0"
         else:
             print("Invalid dictionary!")
         try:
@@ -51,7 +52,7 @@ class LookUpDict(Thread):
             raise Exception(u'网速不给力还是怎么回事，再试试？')
 
         data = response.read().decode('utf-8')
-        return(json.loads(data))
+        return (json.loads(data))
 
     def format(self, json_data):
         snippet = ''
@@ -70,7 +71,8 @@ class LookUpDict(Thread):
             if 'symbols' in json_data:
                 for explain in json_data['symbols'][0]['parts']:
                     if isinstance(explain['means'][0], str):
-                        snippet += '{} : {}\n'.format(explain["part"], ','.join(explain["means"]))
+                        snippet += '{} : {}\n'.format(
+                            explain["part"], ','.join(explain["means"]))
                     if isinstance(explain['means'][0], dict):
                         for i in explain['means']:
                             snippet += '{}:{}\n'.format("释义", i["word_mean"])

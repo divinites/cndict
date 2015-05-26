@@ -14,12 +14,12 @@
 						"children": [
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/cndict/Default.sublime-keymap"},
+								"args": {"file": "${packages}/cndict/cndict.sublime-keymap"},
 								"caption": "Keymap – Default"
 							},
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/User/Cndict.sublime-keymap"},
+								"args": {"file": "${packages}/User/cndict.sublime-keymap"},
 								"caption": "keymap – User"
 							},
 							{ "caption": "-" }
