@@ -1,0 +1,1 @@
+For ST3 users, "Youdao English-Chinese Translate" has been replaced by "Cndict", which offers both Youdao and CIBA access, see README.md for more details. 

@@ -1,0 +1,1 @@
+Use output Panel to show the translation results.
