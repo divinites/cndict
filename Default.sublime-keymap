@@ -1,0 +1,11 @@
+[
+        { "keys": [ "ctrl+alt+y" ], 
+          "command": "cndict",
+          "args": {"dict": "Youdao"}
+        },
+        { "keys": [ "ctrl+alt+c" ], 
+          "command": "cndict",
+          "args": {"dict": "Jinshan"}
+        }
+
+]
