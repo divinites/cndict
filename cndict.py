@@ -4,7 +4,6 @@ import urllib.error
 from threading import Thread
 from urllib.parse import quote
 import json
-import sublime
 
 _YOUDAO_API = "http://fanyi.youdao.com/openapi.do?keyfrom=divinites&key=1583185521&type=data&doctype=json&version=1.1&q="
 _CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
@@ -12,8 +11,6 @@ _CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
 
 class CndictCommand(sublime_plugin.WindowCommand):
     def run(self, **kwargs):
-        settings = sublime.load_settings("cndict.sublime-settings")
-        self.args = settings.get("Default Dict")
         if 'dict' in kwargs.keys():
             self.args = kwargs['dict']
         window = self.window

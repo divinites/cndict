@@ -14,15 +14,24 @@
 						"children": [
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/cndict/cndict.sublime-keymap"},
+								"args": {"file": "${packages}/Cndict/Default.sublime-keymap"},
 								"caption": "Keymap – Default"
 							},
 							{
 								"command": "open_file",
-								"args": {"file": "${packages}/User/cndict.sublime-keymap"},
-								"caption": "keymap – User"
+								"args": {"file": "${packages}/Cndict/Default (OSX).sublime-keymap"},
+								"caption": "keymap – User (OSX)"
 							},
-							{ "caption": "-" }
+							{
+								"command": "open_file",
+								"args": {"file": "${packages}/Cndict/Default (Windows).sublime-keymap"},
+								"caption": "keymap – User (Windows)"
+							},
+							{
+								"command": "open_file",
+								"args": {"file": "${packages}/Cndict/Default (Linux).sublime-keymap"},
+								"caption": "keymap – User (Linux)"
+							}
 						]
 					}
 				]
