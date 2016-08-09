@@ -1,4 +1,5 @@
-# cndict
+# Chinese-English Bilingual Dictionary
+
 A small EN-CN dictionary plug-in for Sublime text 3
 
 It is a very simple dictionary plug-in for sublime text3. 
