@@ -1,0 +1,3 @@
+Version 0.7.5.
+
+- This dictionary will automatically capture the word where the cursor was placed, no more need to manually select the word.
