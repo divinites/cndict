@@ -15,6 +15,7 @@ class CndictCommand(sublime_plugin.WindowCommand):
             self.args = kwargs['dict']
         window = self.window
         view = window.active_view()
+        window.run_command("find_under_expand")
         sel = view.sel()
         region = sel[0]
         word = view.substr(region)
