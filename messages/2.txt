@@ -1,0 +1,5 @@
+- Add phantom Support and cndict.sublime-settings,
+
+- Please read readme.md for details.
+
+Please restart to enjoy the new looking of cndict!

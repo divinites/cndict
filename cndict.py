@@ -1,9 +1,12 @@
 import sublime_plugin
+import sublime
 import urllib.request
 import urllib.error
 from threading import Thread
 from urllib.parse import quote
 import json
+import mdpopups
+
 
 _YOUDAO_API = "http://fanyi.youdao.com/openapi.do?keyfrom=divinites&key=1583185521&type=data&doctype=json&version=1.1&q="
 _CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
@@ -23,10 +26,16 @@ class CndictCommand(sublime_plugin.WindowCommand):
         func.start()
 
 
+class EraseDictCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        self.window.active_view().erase_phantoms('trans')
+
+
 class LookUpDict(Thread):
     def __init__(self, window, word, args):
         Thread.__init__(self)
         self.window = window
+        self.view = self.window.active_view()
         self.word = word
         self.args = args
 
@@ -79,12 +88,27 @@ class LookUpDict(Thread):
             snippet += "可能太长了……词典里没有"
         return snippet
 
+    def on_close_phantom(self, href):
+        """Close all phantoms."""
+        mdpopups.erase_phantoms(self.view, 'trans')
+
     def run(self):
         if self.checkword(self.word):
             json_data = self.acquiredata(self.word)
             snippet = self.format(json_data)
         else:
             snippet = "忘记选字了吧？"
-        board = self.window.create_output_panel("tran")
-        board.run_command('append', {'characters': snippet})
-        self.window.run_command("show_panel", {"panel": "output.tran"})
+        close = '[Close/关闭\n](#)'
+        settings = sublime.load_settings("cndict.sublime-settings")
+        if settings.get("phantom", True):
+            mdpopups.add_phantom(view=self.view,
+                                 key="trans",
+                                 region=self.view.sel()[0],
+                                 content=snippet + close,
+                                 layout=sublime.LAYOUT_BELOW,
+                                 on_navigate=self.on_close_phantom,
+                                 md=True)
+        else:
+            board = self.window.create_output_panel("trans")
+            board.run_command('append', {'characters': snippet})
+            self.window.run_command("show_panel", {"panel": "output.trans"})

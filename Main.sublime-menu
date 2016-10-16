@@ -1,41 +1,39 @@
 [
-	{
-		"caption": "Tools",
-		"mnemonic": "T",
-		"id": "tools",
-		"children": [
-			{
-				"caption": "Packages",
-				"mnemonic": "P",
-				"id": "packages",
-				"children": [
-					{
-						"caption": "CN Dict",
-						"children": [
+    {
+        "caption": "Preferences",
+        "mnemonic": "n",
+        "id": "preferences",
+        "children":
+        [
+            {
+                "caption": "Package Settings",
+                "mnemonic": "P",
+                "id": "package-settings",
+                "children":
+                [
+                    {
+                        "caption": "Cndict",
+                        "children":
+                        [
+                            {
+                                "command": "open_file",
+                                "args": {"file": "${packages}/Cndict/cndict.sublime-settings"},
+                                "caption": "Settings – Default"
+                            },
+                            {
+                                "command": "open_file",
+                                "args": {"file": "${packages}/User/cndict.sublime-settings"},
+                                "caption": "Settings – User"
+                            },
 							{
 								"command": "open_file",
 								"args": {"file": "${packages}/Cndict/Default.sublime-keymap"},
 								"caption": "Keymap – Default"
-							},
-							{
-								"command": "open_file",
-								"args": {"file": "${packages}/Cndict/Default (OSX).sublime-keymap"},
-								"caption": "keymap – User (OSX)"
-							},
-							{
-								"command": "open_file",
-								"args": {"file": "${packages}/Cndict/Default (Windows).sublime-keymap"},
-								"caption": "keymap – User (Windows)"
-							},
-							{
-								"command": "open_file",
-								"args": {"file": "${packages}/Cndict/Default (Linux).sublime-keymap"},
-								"caption": "keymap – User (Linux)"
 							}
-						]
-					}
-				]
-			}
-		]
-	}
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
 ]

@@ -1,11 +1,13 @@
 [
-        { "keys": [ "ctrl+alt+y" ], 
+        { "keys": [ "ctrl+alt+y" ],
           "command": "cndict",
           "args": {"dict": "Youdao"}
         },
-        { "keys": [ "ctrl+alt+c" ], 
+        { "keys": [ "ctrl+alt+c" ],
           "command": "cndict",
           "args": {"dict": "Jinshan"}
+        },
+        { "keys": [ "ctrl+shift+d" ],
+          "command": "erase_dict"
         }
-
 ]
