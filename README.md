@@ -17,7 +17,7 @@ There are three possible parameter for format:
 - "popup":
 
   a tooltips pop-up will show up, it will not be embeded in but just float on the view.
-  close it buy <kbd>ESC</kbd> or <kbd> Crtl+Shift+D </kbd>
+  close it by <kbd>ESC</kbd> or <kbd> Crtl+Shift+D </kbd>
 
 - "phantom":
 
