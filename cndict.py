@@ -20,7 +20,8 @@ def plugin_unloaded():
         system_setting.erase("mdpopups.default_formatting")
     if FLAG[0]:
         system_setting.erase("mdpopups.user_css")
-    sublime.save_settings("Preferences.sublime-settings")
+    if FLAG[0] or FLAG[1]:
+        sublime.save_settings("Preferences.sublime-settings")
 
 
 def plugin_loaded():
@@ -31,7 +32,8 @@ def plugin_loaded():
     if not system_setting.has("mdpopups.default_formatting"):
         system_setting.set("mdpopups.default_formatting", False)
         FLAG[1] = True
-    sublime.save_settings("Preferences.sublime-settings")
+    if FLAG[0] or FLAG[1]:
+        sublime.save_settings("Preferences.sublime-settings")
 
 
 class CndictCommand(sublime_plugin.WindowCommand):
