@@ -1,3 +1,7 @@
 {
-    "phantom": true
+    // There are three options here:
+    // "popup" is the default, the dictionary will show a pop-up when queried.
+    // "phantom" will show the query result as a phantom
+    // "pannel" will show the query result in an output pannel
+    "format": "popup"
 }

@@ -1,16 +1,5 @@
-# Chinese-English Bilingual Dictionary
+New parameter "format" introduced!
 
-A small EN-CN dictionary plug-in for Sublime text 3
-
-It is a very simple dictionary plug-in for sublime text3.
-
-Usage:
-
-Ctrl+Alt+Y: 有道词典 Youdao
-
-Ctrl+Alt+C: 金山词典 Jinshan
-
-Select a word you want to translate, use corresponding key-mappings, then depending on the configuration "format",
 
 There are three possible parameter for format:
 
@@ -28,5 +17,3 @@ There are three possible parameter for format:
 - "pannel":
 
  This is the classical option, an Output Pannel will show up from the bottom.
-
-

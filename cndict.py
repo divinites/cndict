@@ -18,6 +18,8 @@ class CndictCommand(sublime_plugin.WindowCommand):
             self.args = kwargs['dict']
         window = self.window
         view = window.active_view()
+        view.settings().set("mdpopups.default_formatting", False)
+        view.settings().set("mdpopups.user_css", "Packages/cndict/mdpopups.css")
         window.run_command("find_under_expand")
         sel = view.sel()
         region = sel[0]
@@ -88,27 +90,33 @@ class LookUpDict(Thread):
             snippet += "可能太长了……词典里没有"
         return snippet
 
-    def on_close_phantom(self, href):
+    def on_close_phantom_and_popup(self, href):
         """Close all phantoms."""
         mdpopups.erase_phantoms(self.view, 'trans')
+        mdpopups.hide_popup(self.view)
 
     def run(self):
         if self.checkword(self.word):
             json_data = self.acquiredata(self.word)
             snippet = self.format(json_data)
         else:
-            snippet = "忘记选字了吧？"
-        close = '[Close/关闭\n](#)'
+            snippet = '!!! panel-error "Error"\n' + "    忘记选字了吧?\n"
         settings = sublime.load_settings("cndict.sublime-settings")
-        if settings.get("phantom", True):
+        if settings.get("format") == "phantom":
             mdpopups.add_phantom(view=self.view,
                                  key="trans",
                                  region=self.view.sel()[0],
-                                 content=snippet + close,
+                                 content=snippet,
                                  layout=sublime.LAYOUT_BELOW,
-                                 on_navigate=self.on_close_phantom,
+                                 on_navigate=self.on_close_phantom_and_popup,
                                  md=True)
-        else:
+        elif settings.get("format") == "pannel":
+            print("pannel")
             board = self.window.create_output_panel("trans")
             board.run_command('append', {'characters': snippet})
             self.window.run_command("show_panel", {"panel": "output.trans"})
+        else:
+            mdpopups.show_popup(view=self.view,
+                                content=snippet,
+                                on_navigate=self.on_close_phantom_and_popup,
+                                md=True)
