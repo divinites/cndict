@@ -12,14 +12,16 @@ _YOUDAO_API = "http://fanyi.youdao.com/openapi.do?keyfrom=divinites&key=15831855
 _CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
 
 
+global mdpop_params
+mdpop_params = {}
+
+
 class CndictCommand(sublime_plugin.WindowCommand):
     def run(self, **kwargs):
         if 'dict' in kwargs.keys():
             self.args = kwargs['dict']
         window = self.window
         view = window.active_view()
-        view.settings().set("mdpopups.default_formatting", False)
-        view.settings().set("mdpopups.user_css", "Packages/cndict/mdpopups.css")
         window.run_command("find_under_expand")
         sel = view.sel()
         region = sel[0]
@@ -30,7 +32,20 @@ class CndictCommand(sublime_plugin.WindowCommand):
 
 class EraseDictCommand(sublime_plugin.WindowCommand):
     def run(self):
-        self.window.active_view().erase_phantoms('trans')
+        global mdpop_params
+        self.view = self.window.active_view()
+        self.system_setting = sublime.load_settings("Preferences.sublime-settings")
+        mdpopups.erase_phantoms(self.view, 'trans')
+        mdpopups.hide_popup(self.view)
+        if "mdpopups.default_formatting" in mdpop_params:
+            self.system_setting.set("mdpopups.default_formatting", mdpop_params["mdpopups.default_formatting"])
+        else:
+            self.system_setting.erase("mdpopups.default_formatting")
+        if "mdpopups.user_css" in mdpop_params:
+            self.system_setting.set("mdpopups.user_css", mdpop_params["mdpopups.user_css"])
+        else:
+            self.system_setting.erase("mdpopups.user_css")
+        sublime.save_settings("Preferences.sublime-settings")
 
 
 class LookUpDict(Thread):
@@ -40,6 +55,7 @@ class LookUpDict(Thread):
         self.view = self.window.active_view()
         self.word = word
         self.args = args
+        self.system_setting = None
 
     def checkword(self, word):
         if self.word == '':
@@ -92,10 +108,31 @@ class LookUpDict(Thread):
 
     def on_close_phantom_and_popup(self, href):
         """Close all phantoms."""
+
+        global mdpop_params
         mdpopups.erase_phantoms(self.view, 'trans')
         mdpopups.hide_popup(self.view)
+        if "mdpopups.default_formatting" in mdpop_params:
+            self.system_setting.set("mdpopups.default_formatting", mdpop_params["mdpopups.default_formatting"])
+        else:
+            self.system_setting.erase("mdpopups.default_formatting")
+        if "mdpopups.user_css" in mdpop_params:
+            self.system_setting.set("mdpopups.user_css", mdpop_params["mdpopups.user_css"])
+        else:
+            self.system_setting.erase("mdpopups.user_css")
+        sublime.save_settings("Preferences.sublime-settings")
 
     def run(self):
+        global mdpop_params
+        if not self.system_setting:
+            self.system_setting = sublime.load_settings("Preferences.sublime-settings")
+        if self.system_setting.has("mdpopups.user_css"):
+            mdpop_params["mdpopups.user_css"] = self.system_setting.get("mdpopups.user_css")
+        self.system_setting.set("mdpopups.user_css", "Packages/cndict/mdpopups.css")
+        if self.system_setting.has("mdpopups.default_formatting"):
+            mdpop_params["mdpopups.default_formatting"] = self.system_setting.get("mdpopups.default_formatting")
+        self.system_setting.set("mdpopups.default_formatting", False)
+        sublime.save_settings("Preferences.sublime-settings")
         if self.checkword(self.word):
             json_data = self.acquiredata(self.word)
             snippet = '!!! panel-success "' + self.args + '"\n'
