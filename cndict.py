@@ -64,28 +64,28 @@ class LookUpDict(Thread):
         return (json.loads(data))
 
     def format(self, json_data):
-        snippet = ''
+        snippet = '\t'
         if self.args == 'Youdao':
             if 'basic' in json_data:
                 for explain in json_data['basic'].items():
                     if explain[0] == 'explains':
                         for i in explain[1:]:
-                            snippet += '\n'.join(i)
-                snippet += "\n------------------------\n"
+                            snippet += '\n\t'.join(i)
+                snippet += "\n\t------------------------\n"
             if "web" in json_data:
                 for explain in json_data['web']:
                     net_explain = ','.join(explain['value'])
-                    snippet += "{} : {}\n".format(explain['key'], net_explain)
+                    snippet += "\t{} : {}\n".format(explain['key'], net_explain)
         elif self.args == 'Jinshan':
             if 'symbols' in json_data:
                 for explain in json_data['symbols'][0]['parts']:
                     if isinstance(explain['means'][0], str):
-                        snippet += '{} : {}\n'.format(
+                        snippet += '\t{} : {}\n'.format(
                             explain["part"], ','.join(explain["means"]))
                     if isinstance(explain['means'][0], dict):
                         for i in explain['means']:
-                            snippet += '{}:{}\n'.format("释义", i["word_mean"])
-                snippet += "\n------------------------\n"
+                            snippet += '    {}:{}\n'.format("释义", i["word_mean"])
+                snippet += "    \n    ------------------------\n"
         else:
             snippet += "可能太长了……词典里没有"
         return snippet
@@ -98,7 +98,8 @@ class LookUpDict(Thread):
     def run(self):
         if self.checkword(self.word):
             json_data = self.acquiredata(self.word)
-            snippet = self.format(json_data)
+            snippet = '!!! panel-success "' + self.args + '"\n'
+            snippet += self.format(json_data)
         else:
             snippet = '!!! panel-error "Error"\n' + "    忘记选字了吧?\n"
         settings = sublime.load_settings("cndict.sublime-settings")
