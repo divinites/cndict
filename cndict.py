@@ -11,9 +11,27 @@ import mdpopups
 _YOUDAO_API = "http://fanyi.youdao.com/openapi.do?keyfrom=divinites&key=1583185521&type=data&doctype=json&version=1.1&q="
 _CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
 
+FLAG = [False, False]
 
-global mdpop_params
-mdpop_params = {}
+
+def plugin_unloaded():
+    system_setting = sublime.load_settings("Preferences.sublime-settings")
+    if FLAG[1]:
+        system_setting.erase("mdpopups.default_formatting")
+    if FLAG[0]:
+        system_setting.erase("mdpopups.user_css")
+    sublime.save_settings("Preferences.sublime-settings")
+
+
+def plugin_loaded():
+    system_setting = sublime.load_settings("Preferences.sublime-settings")
+    if not system_setting.has("mdpopups.user_css"):
+        system_setting.set("mdpopups.user_css", "Packages/cndict/mdpopups.css")
+        FLAG[0] = True
+    if not system_setting.has("mdpopups.default_formatting"):
+        system_setting.set("mdpopups.default_formatting", False)
+        FLAG[1] = True
+    sublime.save_settings("Preferences.sublime-settings")
 
 
 class CndictCommand(sublime_plugin.WindowCommand):
@@ -34,18 +52,8 @@ class EraseDictCommand(sublime_plugin.WindowCommand):
     def run(self):
         global mdpop_params
         self.view = self.window.active_view()
-        self.system_setting = sublime.load_settings("Preferences.sublime-settings")
         mdpopups.erase_phantoms(self.view, 'trans')
         mdpopups.hide_popup(self.view)
-        if "mdpopups.default_formatting" in mdpop_params:
-            self.system_setting.set("mdpopups.default_formatting", mdpop_params["mdpopups.default_formatting"])
-        else:
-            self.system_setting.erase("mdpopups.default_formatting")
-        if "mdpopups.user_css" in mdpop_params:
-            self.system_setting.set("mdpopups.user_css", mdpop_params["mdpopups.user_css"])
-        else:
-            self.system_setting.erase("mdpopups.user_css")
-        sublime.save_settings("Preferences.sublime-settings")
 
 
 class LookUpDict(Thread):
@@ -55,7 +63,6 @@ class LookUpDict(Thread):
         self.view = self.window.active_view()
         self.word = word
         self.args = args
-        self.system_setting = None
 
     def checkword(self, word):
         if self.word == '':
@@ -123,16 +130,6 @@ class LookUpDict(Thread):
         sublime.save_settings("Preferences.sublime-settings")
 
     def run(self):
-        global mdpop_params
-        if not self.system_setting:
-            self.system_setting = sublime.load_settings("Preferences.sublime-settings")
-        if self.system_setting.has("mdpopups.user_css"):
-            mdpop_params["mdpopups.user_css"] = self.system_setting.get("mdpopups.user_css")
-        self.system_setting.set("mdpopups.user_css", "Packages/cndict/mdpopups.css")
-        if self.system_setting.has("mdpopups.default_formatting"):
-            mdpop_params["mdpopups.default_formatting"] = self.system_setting.get("mdpopups.default_formatting")
-        self.system_setting.set("mdpopups.default_formatting", False)
-        sublime.save_settings("Preferences.sublime-settings")
         if self.checkword(self.word):
             json_data = self.acquiredata(self.word)
             snippet = '!!! panel-success "' + self.args + '"\n'
