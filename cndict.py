@@ -7,7 +7,6 @@ from urllib.parse import quote
 import json
 import mdpopups
 
-
 _YOUDAO_API = "http://fanyi.youdao.com/openapi.do?keyfrom=divinites&key=1583185521&type=data&doctype=json&version=1.1&q="
 _CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
 
@@ -100,7 +99,8 @@ class LookUpDict(Thread):
             if "web" in json_data:
                 for explain in json_data['web']:
                     net_explain = ','.join(explain['value'])
-                    snippet += "\t{} : {}\n".format(explain['key'], net_explain)
+                    snippet += "\t{} : {}\n".format(explain['key'],
+                                                    net_explain)
         elif self.args == 'Jinshan':
             if 'symbols' in json_data:
                 for explain in json_data['symbols'][0]['parts']:
@@ -109,7 +109,8 @@ class LookUpDict(Thread):
                             explain["part"], ','.join(explain["means"]))
                     if isinstance(explain['means'][0], dict):
                         for i in explain['means']:
-                            snippet += '    {}:{}\n'.format("释义", i["word_mean"])
+                            snippet += '    {}:{}\n'.format(
+                                "释义", i["word_mean"])
                 snippet += "    \n    ------------------------\n"
         else:
             snippet += "可能太长了……词典里没有"
@@ -122,11 +123,14 @@ class LookUpDict(Thread):
         mdpopups.erase_phantoms(self.view, 'trans')
         mdpopups.hide_popup(self.view)
         if "mdpopups.default_formatting" in mdpop_params:
-            self.system_setting.set("mdpopups.default_formatting", mdpop_params["mdpopups.default_formatting"])
+            self.system_setting.set(
+                "mdpopups.default_formatting",
+                mdpop_params["mdpopups.default_formatting"])
         else:
             self.system_setting.erase("mdpopups.default_formatting")
         if "mdpopups.user_css" in mdpop_params:
-            self.system_setting.set("mdpopups.user_css", mdpop_params["mdpopups.user_css"])
+            self.system_setting.set("mdpopups.user_css",
+                                    mdpop_params["mdpopups.user_css"])
         else:
             self.system_setting.erase("mdpopups.user_css")
         sublime.save_settings("Preferences.sublime-settings")
@@ -140,20 +144,22 @@ class LookUpDict(Thread):
             snippet = '!!! panel-error "Error"\n' + "    忘记选字了吧?\n"
         settings = sublime.load_settings("cndict.sublime-settings")
         if settings.get("format") == "phantom":
-            mdpopups.add_phantom(view=self.view,
-                                 key="trans",
-                                 region=self.view.sel()[0],
-                                 content=snippet,
-                                 layout=sublime.LAYOUT_BELOW,
-                                 on_navigate=self.on_close_phantom_and_popup,
-                                 md=True)
+            mdpopups.add_phantom(
+                view=self.view,
+                key="trans",
+                region=self.view.sel()[0],
+                content=snippet,
+                layout=sublime.LAYOUT_BELOW,
+                on_navigate=self.on_close_phantom_and_popup,
+                md=True)
         elif settings.get("format") == "pannel":
             print("pannel")
             board = self.window.create_output_panel("trans")
             board.run_command('append', {'characters': snippet})
             self.window.run_command("show_panel", {"panel": "output.trans"})
         else:
-            mdpopups.show_popup(view=self.view,
-                                content=snippet,
-                                on_navigate=self.on_close_phantom_and_popup,
-                                md=True)
+            mdpopups.show_popup(
+                view=self.view,
+                content=snippet,
+                on_navigate=self.on_close_phantom_and_popup,
+                md=True)
