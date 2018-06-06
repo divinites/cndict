@@ -63,10 +63,12 @@ class CndictCommand(sublime_plugin.WindowCommand):
             self.args = kwargs['dict']
         window = self.window
         view = window.active_view()
-        window.run_command("find_under_expand")
         sel = view.sel()
         region = sel[0]
-        word = view.substr(region)
+        if region.a == region.b:
+            word = view.substr(view.word(region.a))
+        else:
+            word = view.substr(region)
         func = LookupDict(window, word, self.args)
         func.start()
 
@@ -125,7 +127,8 @@ class LookupDict(Thread):
                 snippet += SNIPPET_ERROR_NONE
                 snippet += "\t{}: {}\n".format('ret', json_data['ret'])
                 snippet += "\t{}: {}\n".format('msg', json_data['msg'])
-                snippet += "\t{}\n".format('https://ai.qq.com/doc/returncode.shtml')
+                snippet += "\t{}\n".format(
+                    'https://ai.qq.com/doc/returncode.shtml')
         elif self.args == 'Youdao':
             if 'basic' in json_data:
                 for explain in json_data['basic'].items():
