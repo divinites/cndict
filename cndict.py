@@ -88,8 +88,9 @@ class LookupDict(Thread):
         return (json.loads(data))
 
     def format(self, json_data):
-        snippet = '\t'
+        snippet = ''
         if self.args == 'Youdao':
+            snippet = '\t'
             if 'basic' in json_data:
                 for explain in json_data['basic'].items():
                     if explain[0] == 'explains':
@@ -102,7 +103,7 @@ class LookupDict(Thread):
                     snippet += "\t{} : {}\n".format(explain['key'],
                                                     net_explain)
         elif self.args == 'Jinshan':
-            if 'symbols' in json_data:
+            if 'word_name' in json_data:
                 for explain in json_data['symbols'][0]['parts']:
                     if isinstance(explain['means'][0], str):
                         snippet += '\t{} : {}\n'.format(
@@ -112,8 +113,10 @@ class LookupDict(Thread):
                             snippet += '    {}:{}\n'.format(
                                 "释义", i["word_mean"])
                 snippet += "    \n    ------------------------\n"
+            else:
+                snippet += "词典里没有..."
         else:
-            snippet += "可能太长了……词典里没有"
+            snippet += "可能太长了...词典里没有"
         return snippet
 
     def on_close_phantom_and_popup(self, href):
