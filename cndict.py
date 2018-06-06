@@ -118,9 +118,11 @@ class LookupDict(Thread):
     def format(self, json_data):
         snippet = '\t'
         if self.args == 'Tencent':
-            if 'data' in json_data:
-                snippet += json_data['data'].get('trans_text',
-                                                 SNIPPET_ERROR_NONE)
+            if json_data.get('ret') == 0:
+                if 'data' in json_data:
+                    snippet += json_data['data'].get('trans_text')
+            else:
+                snippet += SNIPPET_ERROR_NONE
         elif self.args == 'Youdao':
             if 'basic' in json_data:
                 for explain in json_data['basic'].items():
