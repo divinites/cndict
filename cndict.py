@@ -31,8 +31,8 @@ _CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
 
 FLAG = [False, False]
 
-SNIPPET_ERROR_NONE = u'词典里没有...'
-SNIPPET_ERROR_TIMEOUT = u'网速不给力还是怎么回事, 再试试?'
+SNIPPET_ERROR_NONE = u'翻译失败...\n'
+SNIPPET_ERROR_TIMEOUT = u'网速不给力还是怎么回事, 再试试?\n'
 
 
 def plugin_unloaded():
@@ -123,6 +123,9 @@ class LookupDict(Thread):
                     snippet += json_data['data'].get('trans_text')
             else:
                 snippet += SNIPPET_ERROR_NONE
+                snippet += "\t{}: {}\n".format('ret', json_data['ret'])
+                snippet += "\t{}: {}\n".format('msg', json_data['msg'])
+                snippet += "\t{}\n".format('https://ai.qq.com/doc/returncode.shtml')
         elif self.args == 'Youdao':
             if 'basic' in json_data:
                 for explain in json_data['basic'].items():
