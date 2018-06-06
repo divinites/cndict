@@ -45,7 +45,7 @@ class CndictCommand(sublime_plugin.WindowCommand):
         sel = view.sel()
         region = sel[0]
         word = view.substr(region)
-        func = LookUpDict(window, word, self.args)
+        func = LookupDict(window, word, self.args)
         func.start()
 
 
@@ -57,7 +57,7 @@ class EraseDictCommand(sublime_plugin.WindowCommand):
         mdpopups.hide_popup(self.view)
 
 
-class LookUpDict(Thread):
+class LookupDict(Thread):
     def __init__(self, window, word, args):
         Thread.__init__(self)
         self.window = window
@@ -139,9 +139,12 @@ class LookUpDict(Thread):
         if self.checkword(self.word):
             json_data = self.acquiredata(self.word)
             snippet = '!!! panel-success "' + self.args + '"\n'
-            snippet += self.format(json_data)
+            format_data = json_data = self.format(json_data)
+            sublime.set_clipboard(format_data)
+            snippet += format_data
         else:
             snippet = '!!! panel-error "Error"\n' + "    忘记选字了吧?\n"
+
         settings = sublime.load_settings("cndict.sublime-settings")
         if settings.get("format") == "phantom":
             mdpopups.add_phantom(
