@@ -62,7 +62,7 @@ class LookUpDict(Thread):
         Thread.__init__(self)
         self.window = window
         self.view = self.window.active_view()
-        self.word = word
+        self.word = word.lower()
         self.args = args
 
     def checkword(self, word):
