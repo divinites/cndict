@@ -7,10 +7,32 @@ from urllib.parse import quote
 import json
 import mdpopups
 
+# ------------------ Split Line By Floyda ------------------
+# reload apiutil library
+# ------------------ Split Line By Floyda ------------------
+import sys
+
+
+def reload(name):
+    rubbish_pool = []
+    for key in sys.modules:
+        if name in key:
+            rubbish_pool.append(key)
+    for key in rubbish_pool:
+        del sys.modules[key]
+
+
+reload('apiutil')
+import apiutil
+# ------------------ Split Line By Floyda ------------------
+
 _YOUDAO_API = "http://fanyi.youdao.com/openapi.do?keyfrom=divinites&key=1583185521&type=data&doctype=json&version=1.1&q="
 _CIBA_API = "http://dict-co.iciba.com/api/dictionary.php?w="
 
 FLAG = [False, False]
+
+SNIPPET_ERROR_NONE = u'词典里没有...'
+SNIPPET_ERROR_TIMEOUT = u'网速不给力还是怎么回事, 再试试?'
 
 
 def plugin_unloaded():
@@ -72,6 +94,12 @@ class LookupDict(Thread):
             return True
 
     def acquiredata(self, word):
+        if self.args == 'Tencent':
+            app_id = '1106881265'  # You can replace it with your own app id.
+            app_key = 'cdjZ2xHc3vRoQrUi'  # You can replace it with your own app key.
+            type = 0  # 0:Automatic identification( https://ai.qq.com/doc/nlptrans.shtml )
+            ai_obj = apiutil.AiPlat(app_id, app_key)
+            return ai_obj.getNlpTextTrans(word, type)
         if self.args == 'Youdao':
             request = _YOUDAO_API + quote(self.word)
         elif self.args == 'Jinshan':
@@ -82,28 +110,34 @@ class LookupDict(Thread):
         try:
             response = urllib.request.urlopen(request)
         except urllib.error.URLError:
-            raise Exception(u'网速不给力还是怎么回事，再试试？')
+            raise Exception(SNIPPET_ERROR_TIMEOUT)
 
         data = response.read().decode('utf-8')
         return (json.loads(data))
 
     def format(self, json_data):
-        snippet = ''
-        if self.args == 'Youdao':
-            snippet = '\t'
+        snippet = '\t'
+        if self.args == 'Tencent':
+            if 'data' in json_data:
+                snippet += json_data['data'].get('trans_text',
+                                                 SNIPPET_ERROR_NONE)
+        elif self.args == 'Youdao':
             if 'basic' in json_data:
                 for explain in json_data['basic'].items():
                     if explain[0] == 'explains':
                         for i in explain[1:]:
                             snippet += '\n\t'.join(i)
                 snippet += "\n\t------------------------\n"
-            if "web" in json_data:
+            elif "web" in json_data:
                 for explain in json_data['web']:
                     net_explain = ','.join(explain['value'])
                     snippet += "\t{} : {}\n".format(explain['key'],
                                                     net_explain)
+            else:
+                snippet += SNIPPET_ERROR_NONE
         elif self.args == 'Jinshan':
-            if 'word_name' in json_data:
+            if 'word_name' in json_data and 'symbols' in json_data:
+                snippet = ''
                 for explain in json_data['symbols'][0]['parts']:
                     if isinstance(explain['means'][0], str):
                         snippet += '\t{} : {}\n'.format(
@@ -114,9 +148,9 @@ class LookupDict(Thread):
                                 "释义", i["word_mean"])
                 snippet += "    \n    ------------------------\n"
             else:
-                snippet += "词典里没有..."
+                snippet += SNIPPET_ERROR_NONE
         else:
-            snippet += "可能太长了...词典里没有"
+            snippet += SNIPPET_ERROR_NONE
         return snippet
 
     def on_close_phantom_and_popup(self, href):
