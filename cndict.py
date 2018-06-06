@@ -177,12 +177,20 @@ class LookupDict(Thread):
             self.system_setting.erase("mdpopups.user_css")
         sublime.save_settings("Preferences.sublime-settings")
 
+    def parse_to_clipboard(self, content):
+        _content = []
+        lines = content.split('\n')
+        for line in lines:
+            new_line = line.strip(' ').strip('\n').strip('\t')
+            _content.append(new_line)
+        sublime.set_clipboard('\n'.join(_content))
+
     def run(self):
         if self.checkword(self.word):
             json_data = self.acquiredata(self.word)
             snippet = '!!! panel-success "' + self.args + '"\n'
             format_data = json_data = self.format(json_data)
-            sublime.set_clipboard(format_data)
+            self.parse_to_clipboard(format_data)
             snippet += format_data
         else:
             snippet = '!!! panel-error "Error"\n' + "    忘记选字了吧?\n"
