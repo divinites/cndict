@@ -91,8 +91,11 @@ class LookupDict(Thread):
         Thread.__init__(self)
         self.window = window
         self.view = self.window.active_view()
-        self.word = word.lower()
         self.args = args
+        self.word = word.lower()
+
+        if self.args == 'Tencent':
+            self.word = self.word.replace(' ', '')
 
     def checkword(self, word):
         if self.word == '':
@@ -127,7 +130,12 @@ class LookupDict(Thread):
         if self.args == 'Tencent':
             if json_data.get('ret') == 0:
                 if 'data' in json_data:
-                    snippet += json_data['data'].get('trans_text')
+                    trans_text = json_data['data'].get('trans_text')
+                    org_text = json_data['data'].get('org_text')
+                    if trans_text == org_text:
+                        snippet += SNIPPET_ERROR_NONE
+                    else:
+                        snippet += trans_text
             else:
                 snippet += SNIPPET_ERROR_NONE
                 snippet += "\t{}: {}\n".format('ret', json_data['ret'])
