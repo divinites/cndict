@@ -11,6 +11,11 @@ import mdpopups
 # reload apiutil library
 # ------------------ Split Line By Floyda ------------------
 import sys
+import os
+
+sdk_path = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'sdk')
+if sdk_path not in sys.path:
+    sys.path.append(sdk_path)
 
 
 def reload(name):
